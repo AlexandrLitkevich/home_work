@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/wallclockbuilder/stringutil"
+
+	"golang.org/x/example/hello/reverse"
 )
 
 func main() {
-	fmt.Println(stringutil.Reverse("Hello world"))
+	fmt.Println(reverse.String("hello"))
 }
