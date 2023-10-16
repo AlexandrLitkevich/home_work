@@ -17,7 +17,7 @@ func Unpack(str string) (string, error) {
 	}
 
 	if err != nil {
-		return "", nil
+		return "", ErrInvalidString
 	}
 
 	runes := []rune(str)
