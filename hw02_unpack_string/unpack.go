@@ -15,32 +15,24 @@ func Unpack(str string) (string, error) {
 	if !notInt {
 		return str, nil
 	}
-
 	if err != nil {
 		return "", ErrInvalidString
 	}
-
 	runes := []rune(str)
-
 	if unicode.IsNumber(runes[0]) {
 		return "", ErrInvalidString
 	}
-
 	var res string
 	flag := false
-
 	for i := 0; i < len(runes); i++ {
-
 		if runes[i] == '\\' {
 			res += string(runes[i])
 			flag = true
 			continue
 		}
-
 		if unicode.IsLetter(runes[i]) {
 			res += string(runes[i])
 		} else {
-
 			repeatChar := ""
 			for j := i; j < len(str); j++ {
 				if unicode.IsNumber(runes[j]) && unicode.IsNumber(runes[j-1]) {
@@ -51,14 +43,11 @@ func Unpack(str string) (string, error) {
 					break
 				}
 			}
-
 			if repeatChar == "0" {
 				res = res[:len(res)-1]
 				continue
 			}
-
 			count, _ := strconv.Atoi(repeatChar)
-
 			if flag {
 				res += strings.Repeat(string('\\')+string(str[i-1]), count-1)
 			} else {
