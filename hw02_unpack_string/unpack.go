@@ -2,7 +2,6 @@ package hw02unpackstring
 
 import (
 	"errors"
-	"regexp"
 	"strconv"
 	"strings"
 	"unicode"
@@ -11,49 +10,65 @@ import (
 var ErrInvalidString = errors.New("invalid string")
 
 func Unpack(str string) (string, error) {
-	notInt, err := regexp.MatchString("[0-9]+", str)
-	if !notInt {
-		return str, nil
-	}
-	if err != nil {
+	if status := isValid(str); !status {
 		return "", ErrInvalidString
 	}
-	runes := []rune(str)
-	if unicode.IsNumber(runes[0]) {
-		return "", ErrInvalidString
-	}
-	var res string
-	flag := false
-	for i := 0; i < len(runes); i++ {
-		if runes[i] == '\\' {
-			res += string(runes[i])
-			flag = true
+
+	var store strings.Builder
+	prevChar := ""
+	slash := false
+	for _, char := range str {
+		if char == '\\' && !slash {
+			slash = true
 			continue
 		}
-		if unicode.IsLetter(runes[i]) {
-			res += string(runes[i])
-		} else {
-			repeatChar := ""
-			for j := i; j < len(str); j++ {
-				if unicode.IsNumber(runes[j]) && unicode.IsNumber(runes[j-1]) {
-					return "", ErrInvalidString
-				} else if unicode.IsNumber(runes[j]) {
-					repeatChar += string(runes[j])
-				} else {
-					break
-				}
+
+		switch {
+		case unicode.IsNumber(char):
+			repeat, err := strconv.Atoi(string(char))
+			if err != nil {
+				return "", ErrInvalidString
 			}
-			if repeatChar == "0" {
-				res = res[:len(res)-1]
-				continue
-			}
-			count, _ := strconv.Atoi(repeatChar)
-			if flag {
-				res += strings.Repeat(string('\\')+string(str[i-1]), count-1)
+
+			var repeatChar string
+			if slash {
+				repeatChar = string('\\') + prevChar
+				slash = false
 			} else {
-				res += strings.Repeat(string(str[i-1]), count-1)
+				repeatChar = prevChar
 			}
+
+			newStr := strings.Repeat(repeatChar, repeat)
+			store.WriteString(newStr)
+			prevChar = ""
+		case unicode.IsLetter(char):
+			if prevChar != "" {
+				store.WriteString(prevChar)
+			}
+			prevChar = string(char)
 		}
 	}
-	return res, nil
+	if prevChar != "" {
+		store.WriteString(prevChar)
+	}
+
+	return store.String(), nil
+}
+
+func isValid(str string) bool {
+	isNumber := false
+	for i, char := range str {
+		if (i == 0) && (unicode.IsNumber(char)) {
+			return false
+		}
+		if unicode.IsNumber(char) {
+			if isNumber {
+				return false
+			}
+			isNumber = true
+		} else {
+			isNumber = false
+		}
+	}
+	return true
 }
