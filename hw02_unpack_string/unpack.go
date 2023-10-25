@@ -47,7 +47,6 @@ func Unpack(str string) (string, error) {
 				store.WriteString(prevChar)
 			}
 			prevChar = string(char)
-
 		}
 	}
 	if prevChar != "" {
