@@ -4,36 +4,37 @@ import (
 	"errors"
 	"strconv"
 	"strings"
-	"unicode"
 )
 
 var ErrInvalidString = errors.New("invalid string")
 
 func Unpack(str string) (string, error) {
-	if status := isValid(str); !status {
+	runes := []rune(str)
+
+	if status := isValid(runes); !status {
 		return "", ErrInvalidString
 	}
 
 	var store strings.Builder
 	prevChar := ""
-	slash := false
-	for _, char := range str {
-		if char == '\\' && !slash {
-			slash = true
+	isSymbol := false
+	for _, char := range runes {
+		if char == '\\' && !isSymbol {
+			isSymbol = true
 			continue
 		}
 
 		switch {
-		case unicode.IsNumber(char):
+		case string(char) >= "0" && string(char) <= "9":
 			repeat, err := strconv.Atoi(string(char))
 			if err != nil {
 				return "", ErrInvalidString
 			}
 
 			var repeatChar string
-			if slash {
+			if isSymbol {
 				repeatChar = string('\\') + prevChar
-				slash = false
+				isSymbol = false
 			} else {
 				repeatChar = prevChar
 			}
@@ -41,11 +42,12 @@ func Unpack(str string) (string, error) {
 			newStr := strings.Repeat(repeatChar, repeat)
 			store.WriteString(newStr)
 			prevChar = ""
-		case unicode.IsLetter(char):
+		default:
 			if prevChar != "" {
 				store.WriteString(prevChar)
 			}
 			prevChar = string(char)
+
 		}
 	}
 	if prevChar != "" {
@@ -55,13 +57,14 @@ func Unpack(str string) (string, error) {
 	return store.String(), nil
 }
 
-func isValid(str string) bool {
+func isValid(runes []rune) bool {
 	isNumber := false
-	for i, char := range str {
-		if (i == 0) && (unicode.IsNumber(char)) {
+
+	for i, char := range runes {
+		if (i == 0) && (string(char) >= "0" && string(char) <= "9") {
 			return false
 		}
-		if unicode.IsNumber(char) {
+		if string(char) >= "0" && string(char) <= "9" {
 			if isNumber {
 				return false
 			}
