@@ -17,10 +17,35 @@ type ListItem struct {
 }
 
 type list struct {
-	List // Remove me after realization.
-	// Place your code here.
+	len  int
+	head *ListItem
+	tail *ListItem
 }
 
+func (l *list) Len() int {
+	return l.len
+}
+
+func (l *list) Front() *ListItem {
+	return &ListItem{}
+}
+
+func (l *list) Back() *ListItem {
+	return &ListItem{}
+}
+
+func (l *list) PushFront(v interface{}) *ListItem {
+	return &ListItem{}
+}
+
+func (l *list) PushBack(v interface{}) *ListItem {
+	return &ListItem{}
+}
+
+func (l *list) Remove(i *ListItem) {}
+
+func (l *list) MoveToFront(i *ListItem) {}
+
 func NewList() List {
-	return new(list)
+	return &list{}
 }

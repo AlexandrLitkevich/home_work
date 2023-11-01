@@ -9,12 +9,37 @@ type Cache interface {
 }
 
 type lruCache struct {
-	Cache // Remove me after realization.
+	//mu sync.Mutex
 
-	capacity int
+	capacity int //размер очереди
 	queue    List
 	items    map[Key]*ListItem
 }
+
+func (l *lruCache) Set(key Key, value interface{}) bool {
+	// TODO  added mutex
+	if _, ok := l.items[key]; !ok {
+		item := &ListItem{Value: value}
+		l.items[key] = item
+		l.queue.PushFront(item)
+		return true
+	}
+
+	l.items[key].Value = value
+
+	if l.capacity == l.queue.Len() {
+		lastItem := l.queue.Back()
+		l.queue.Remove(lastItem)
+	}
+
+	return true
+}
+
+func (l *lruCache) Get(key Key) (interface{}, bool) {
+	return nil, false
+}
+
+func (l *lruCache) Clear() {}
 
 func NewCache(capacity int) Cache {
 	return &lruCache{
