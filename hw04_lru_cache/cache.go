@@ -19,7 +19,7 @@ type lruCache struct {
 func (l *lruCache) Set(key Key, value interface{}) bool {
 	// TODO  added mutex
 	if _, ok := l.items[key]; !ok {
-		item := &ListItem{Value: value}
+		item := &ListItem{Value: value, Key: key}
 		l.items[key] = item
 		l.queue.PushFront(item)
 		return true
@@ -29,13 +29,18 @@ func (l *lruCache) Set(key Key, value interface{}) bool {
 
 	if l.capacity == l.queue.Len() {
 		lastItem := l.queue.Back()
+
 		l.queue.Remove(lastItem)
+		delete(l.items, lastItem.Key)
 	}
 
 	return true
 }
 
 func (l *lruCache) Get(key Key) (interface{}, bool) {
+	if item, ok := l.items[key]; ok {
+		return item.Value, true
+	}
 	return nil, false
 }
 

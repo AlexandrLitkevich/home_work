@@ -15,6 +15,43 @@ func TestList(t *testing.T) {
 		require.Nil(t, l.Back())
 	})
 
+	t.Run("once", func(t *testing.T) {
+		l := NewList()
+
+		l.PushFront(10) // [10]
+
+		require.Equal(t, 1, l.Len())
+
+	})
+
+	t.Run("four element", func(t *testing.T) {
+		l := NewList()
+
+		l.PushFront(10) // [10]
+		l.PushFront(20) // [20]
+		l.PushFront(30) // [30]
+		l.PushFront(40) // [40]
+
+		require.Equal(t, 4, l.Len())
+
+	})
+
+	t.Run("remove back element", func(t *testing.T) {
+		l := NewList()
+
+		l.PushFront(10) // [10]
+		l.PushFront(20) // [20]
+		l.PushFront(30) // [30].
+		l.PushFront(40) // [40]
+
+		item := l.Back()
+		t.Log("item", item)
+		//l.Remove(item)
+
+		require.Equal(t, 3, l.Len())
+
+	})
+
 	t.Run("complex", func(t *testing.T) {
 		l := NewList()
 
