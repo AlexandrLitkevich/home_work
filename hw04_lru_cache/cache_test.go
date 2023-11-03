@@ -20,6 +20,24 @@ func TestCache(t *testing.T) {
 		require.False(t, ok)
 	})
 
+	t.Run("empty cache2", func(t *testing.T) {
+		c := NewCache(2)
+
+		wasInCache := c.Set("aaa", 100)
+		require.True(t, wasInCache)
+
+		wasInCache = c.Set("bbb", 200)
+		require.True(t, wasInCache)
+
+		wasInCache2 := c.Set("aaa2", 100)
+		require.True(t, wasInCache2)
+
+		wasInCache2 = c.Set("bbb2", 200)
+		require.True(t, wasInCache2)
+		t.Log("this my map", c.GetMap()) //TODO don't clear
+
+	})
+
 	t.Run("simple", func(t *testing.T) {
 		c := NewCache(5)
 

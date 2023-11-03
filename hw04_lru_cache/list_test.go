@@ -39,10 +39,10 @@ func TestList(t *testing.T) {
 	t.Run("remove back element", func(t *testing.T) {
 		l := NewList()
 
-		l.PushFront(10) // [10]//4
-		l.PushFront(20) // [20]//3
-		l.PushFront(30) // [30]//2
-		l.PushFront(40) // [40]//1
+		l.PushFront(&ListItem{Value: 10, Key: "10"}) // [10]//4
+		l.PushFront(&ListItem{Value: 20, Key: "20"}) // [20]//3
+		l.PushFront(&ListItem{Value: 30, Key: "30"}) // [30]//2
+		l.PushFront(&ListItem{Value: 40, Key: "40"}) // [40]//1
 		require.Equal(t, 4, l.Len())
 		require.Equal(t, 40, l.Front().Value)
 		require.Equal(t, 10, l.Back().Value)

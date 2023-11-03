@@ -1,5 +1,7 @@
 package hw04lrucache
 
+import "fmt"
+
 type List interface {
 	Len() int
 	Front() *ListItem
@@ -10,7 +12,6 @@ type List interface {
 	MoveToFront(item *ListItem)
 }
 
-// https://cs.opensource.google/go/go/+/refs/tags/go1.21.3:src/container/list/list.go;l=230
 type ListItem struct {
 	Key   Key
 	Value interface{}
@@ -41,9 +42,16 @@ func (l *list) Back() *ListItem {
 
 // PushFront DONE
 func (l *list) PushFront(v interface{}) *ListItem {
+	el, ok := v.(*ListItem)
+	fmt.Println(ok)
+	if !ok {
+		fmt.Println(";dklfjdkasljf")
+	}
+	fmt.Println("this el.Key ", el.Key)
 
 	item := &ListItem{
-		Value: v,
+		Value: el.Value,
+		Key:   el.Key,
 	}
 
 	l.len++
@@ -63,8 +71,16 @@ func (l *list) PushFront(v interface{}) *ListItem {
 
 // PushBack DONE
 func (l *list) PushBack(v interface{}) *ListItem {
+	el, ok := v.(*ListItem)
+	fmt.Println(ok)
+	if !ok {
+		fmt.Println(";dklfjdkasljf")
+	}
+	fmt.Println("this el.Key ", el.Key)
+
 	item := &ListItem{
-		Value: v,
+		Value: el.Value,
+		Key:   el.Key,
 	}
 
 	switch {
