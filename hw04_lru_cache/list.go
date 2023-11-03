@@ -99,7 +99,7 @@ func (l *list) Remove(item *ListItem) {
 	return
 }
 
-// MoveToFront
+// MoveToFront DONE
 func (l *list) MoveToFront(i *ListItem) {
 	if i.Prev == nil {
 		return
