@@ -21,7 +21,6 @@ func TestList(t *testing.T) {
 		l.PushFront(10) // [10]
 
 		require.Equal(t, 1, l.Len())
-
 	})
 
 	t.Run("four element", func(t *testing.T) {
@@ -33,16 +32,16 @@ func TestList(t *testing.T) {
 		l.PushFront(40) // [40]
 
 		require.Equal(t, 4, l.Len())
-
 	})
 
 	t.Run("remove back element", func(t *testing.T) {
 		l := NewList()
 
-		l.PushFront(&ListItem{Value: 10, Key: "10"}) // [10]//4
-		l.PushFront(&ListItem{Value: 20, Key: "20"}) // [20]//3
-		l.PushFront(&ListItem{Value: 30, Key: "30"}) // [30]//2
-		l.PushFront(&ListItem{Value: 40, Key: "40"}) // [40]//1
+		l.PushFront(10) // [10]//4
+		l.PushFront(20) // [20]//3
+		l.PushFront(30) // [30]//2
+		l.PushFront(40) // [40]//1
+
 		require.Equal(t, 4, l.Len())
 		require.Equal(t, 40, l.Front().Value)
 		require.Equal(t, 10, l.Back().Value)
@@ -51,7 +50,6 @@ func TestList(t *testing.T) {
 		l.Remove(lastItem)
 		require.Equal(t, 3, l.Len())
 		require.Equal(t, 20, l.Back().Value)
-
 	})
 
 	t.Run("remove front element", func(t *testing.T) {
@@ -70,7 +68,6 @@ func TestList(t *testing.T) {
 		l.Remove(firstItem)
 
 		require.Equal(t, 30, l.Front().Value)
-
 	})
 
 	t.Run("push back element", func(t *testing.T) {

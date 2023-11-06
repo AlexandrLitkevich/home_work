@@ -1,7 +1,5 @@
 package hw04lrucache
 
-import "fmt"
-
 type List interface {
 	Len() int
 	Front() *ListItem
@@ -13,7 +11,6 @@ type List interface {
 }
 
 type ListItem struct {
-	Key   Key
 	Value interface{}
 	Next  *ListItem
 	Prev  *ListItem
@@ -25,33 +22,22 @@ type list struct {
 	tail *ListItem
 }
 
-// Len DONE
 func (l *list) Len() int {
 	return l.len
 }
 
-// Front DONE
 func (l *list) Front() *ListItem {
 	return l.head
 }
 
-// Back DONE
 func (l *list) Back() *ListItem {
 	return l.tail
 }
 
-// PushFront DONE
 func (l *list) PushFront(v interface{}) *ListItem {
-	el, ok := v.(*ListItem)
-	fmt.Println(ok)
-	if !ok {
-		fmt.Println(";dklfjdkasljf")
-	}
-	fmt.Println("this el.Key ", el.Key)
 
 	item := &ListItem{
-		Value: el.Value,
-		Key:   el.Key,
+		Value: v,
 	}
 
 	l.len++
@@ -61,26 +47,17 @@ func (l *list) PushFront(v interface{}) *ListItem {
 		return item
 	}
 
-	item.Prev = l.head.Prev //nil
-	l.head.Prev = item      //?
+	item.Prev = l.head.Prev
+	l.head.Prev = item
 	item.Next = l.head
 	l.head = item
 
 	return item
 }
 
-// PushBack DONE
 func (l *list) PushBack(v interface{}) *ListItem {
-	el, ok := v.(*ListItem)
-	fmt.Println(ok)
-	if !ok {
-		fmt.Println(";dklfjdkasljf")
-	}
-	fmt.Println("this el.Key ", el.Key)
-
 	item := &ListItem{
-		Value: el.Value,
-		Key:   el.Key,
+		Value: v,
 	}
 
 	switch {
@@ -97,25 +74,27 @@ func (l *list) PushBack(v interface{}) *ListItem {
 	return item
 }
 
-// Remove DONE
 func (l *list) Remove(item *ListItem) {
+	defer func() {
+		l.len--
+	}()
+
 	switch {
 	case item.Next == nil:
 		item.Prev.Next = nil
 		l.tail = item.Prev
+		return
 	case item.Prev == nil:
 		item.Next.Prev = nil
 		l.head = item.Next
+		return
 	default:
 		item.Prev.Next = item.Next
 		item.Next.Prev = item.Prev
+		return
 	}
-	l.len--
-
-	return
 }
 
-// MoveToFront DONE
 func (l *list) MoveToFront(i *ListItem) {
 	if i.Prev == nil {
 		return
@@ -127,7 +106,6 @@ func (l *list) MoveToFront(i *ListItem) {
 	i.Prev = nil
 	i.Next = l.head
 	l.head = i
-
 }
 
 func NewList() List {
