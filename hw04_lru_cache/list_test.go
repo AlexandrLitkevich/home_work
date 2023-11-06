@@ -75,11 +75,10 @@ func TestList(t *testing.T) {
 
 		l.PushFront(10) // [10]//2
 		l.PushFront(20) // [20]//1
-		l.PushBack(30)  //[30]//3
+		l.PushBack(30)  // [30]//3
 
 		require.Equal(t, 3, l.Len())
 		require.Equal(t, 30, l.Back().Value)
-
 	})
 
 	t.Run("move to front element", func(t *testing.T) {
@@ -100,7 +99,6 @@ func TestList(t *testing.T) {
 		l.MoveToFront(lastElem2)
 		firstElem2 := l.Front()
 		require.Equal(t, 20, firstElem2.Value)
-
 	})
 
 	t.Run("complex", func(t *testing.T) {

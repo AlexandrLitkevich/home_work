@@ -35,7 +35,6 @@ func (l *list) Back() *ListItem {
 }
 
 func (l *list) PushFront(v interface{}) *ListItem {
-
 	item := &ListItem{
 		Value: v,
 	}
