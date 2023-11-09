@@ -77,7 +77,6 @@ func TestCache(t *testing.T) {
 		c.Clear()
 
 		val, ok := c.Get("aaa3")
-		t.Log("this result", val)
 		require.False(t, ok)
 		require.Nil(t, val)
 	})
