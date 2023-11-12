@@ -35,76 +35,47 @@ func (l *list) Back() *ListItem {
 }
 
 func (l *list) PushFront(v interface{}) *ListItem {
-	item := &ListItem{
-		Value: v,
-	}
-
-	l.len++
+	node := &ListItem{v, l.head, nil}
 	if l.head == nil {
-		l.head = item
-		l.tail = item
-		return item
+		l.tail = node
+	} else {
+		l.head.Prev = node
 	}
-
-	item.Prev = l.head.Prev
-	l.head.Prev = item
-	item.Next = l.head
-	l.head = item
-
-	return item
+	l.len++
+	l.head = node
+	return l.head
 }
 
 func (l *list) PushBack(v interface{}) *ListItem {
-	item := &ListItem{
-		Value: v,
-	}
-
-	switch {
-	case l.tail == nil:
-		l.head = item
-		l.tail = item
-	default:
-		item.Prev = l.tail
-		item.Prev.Next = item
-		l.tail = item
+	node := &ListItem{v, nil, l.tail}
+	if l.tail == nil {
+		l.head = node
+	} else {
+		l.tail.Next = node
 	}
 	l.len++
-
-	return item
+	l.tail = node
+	return l.tail
 }
 
 func (l *list) Remove(item *ListItem) {
-	defer func() {
-		l.len--
-	}()
-
-	switch {
-	case item.Next == nil:
-		item.Prev.Next = nil
-		l.tail = item.Prev
-		return
-	case item.Prev == nil:
-		item.Next.Prev = nil
+	if item.Prev == nil {
 		l.head = item.Next
-		return
-	default:
+	} else {
 		item.Prev.Next = item.Next
-		item.Next.Prev = item.Prev
-		return
 	}
+
+	if item.Next == nil {
+		l.tail = item.Prev
+	} else {
+		item.Next.Prev = item.Prev
+	}
+	l.len--
 }
 
-func (l *list) MoveToFront(i *ListItem) {
-	if i.Prev == nil {
-		return
-	}
-	if i.Next == nil {
-		l.tail = i.Prev
-	}
-	i.Prev.Next = i.Next
-	i.Prev = nil
-	i.Next = l.head
-	l.head = i
+func (l *list) MoveToFront(item *ListItem) {
+	l.PushFront(item.Value)
+	l.Remove(item)
 }
 
 func NewList() List {
