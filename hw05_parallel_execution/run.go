@@ -15,8 +15,8 @@ func Run(tasks []Task, n, m int) error {
 	if m <= 0 {
 		return ErrErrorsLimitExceeded
 	}
-	var handlerTasks = make(chan Task)
-	var doneCh = make(chan struct{})
+	handlerTasks := make(chan Task)
+	doneCh := make(chan struct{})
 	var errCount int64
 	var wg sync.WaitGroup
 
@@ -37,7 +37,6 @@ func Run(tasks []Task, n, m int) error {
 						atomic.AddInt64(&errCount, 1)
 					}
 				}
-
 			}
 		}()
 	}
