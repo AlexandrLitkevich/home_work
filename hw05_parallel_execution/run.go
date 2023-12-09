@@ -15,6 +15,11 @@ func Run(tasks []Task, n, m int) error {
 	if m <= 0 {
 		return ErrErrorsLimitExceeded
 	}
+
+	if len(tasks) == 0 || tasks == nil {
+		return nil
+	}
+
 	handlerTasks := make(chan Task)
 
 	doneCh := make(chan struct{})
