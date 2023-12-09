@@ -2,7 +2,6 @@ package hw05parallelexecution
 
 import (
 	"errors"
-	"fmt"
 	"sync"
 	"sync/atomic"
 )
@@ -34,9 +33,7 @@ func Run(tasks []Task, n, m int) error {
 					if !ok {
 						return
 					}
-					fmt.Println("this run task")
 					if err := t(); err != nil {
-						fmt.Println("this error", err)
 						atomic.AddInt64(&errCount, 1)
 					}
 				}
