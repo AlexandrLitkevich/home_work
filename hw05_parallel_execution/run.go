@@ -16,6 +16,7 @@ func Run(tasks []Task, n, m int) error {
 		return ErrErrorsLimitExceeded
 	}
 	handlerTasks := make(chan Task)
+
 	doneCh := make(chan struct{})
 	var errCount int64
 	var wg sync.WaitGroup
@@ -43,13 +44,16 @@ func Run(tasks []Task, n, m int) error {
 
 	for _, task := range tasks {
 		if atomic.LoadInt64(&errCount) >= int64(m) {
-			close(doneCh)
-			return ErrErrorsLimitExceeded
+			break
 		}
 		handlerTasks <- task
 	}
-	close(handlerTasks)
+	close(doneCh)
 	wg.Wait()
+
+	if atomic.LoadInt64(&errCount) >= int64(m) {
+		return ErrErrorsLimitExceeded
+	}
 
 	return nil
 }

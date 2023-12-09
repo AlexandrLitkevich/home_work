@@ -68,7 +68,7 @@ func TestRun(t *testing.T) {
 		require.LessOrEqual(t, int64(elapsedTime), int64(sumTime/2), "tasks were run sequentially?")
 	})
 
-	t.Run("", func(t *testing.T) {
+	t.Run("O min limit error", func(t *testing.T) {
 		tasksCount := 10
 		tasks := make([]Task, 0, tasksCount)
 
