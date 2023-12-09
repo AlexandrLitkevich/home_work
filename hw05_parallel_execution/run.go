@@ -18,15 +18,12 @@ func Run(tasks []Task, n, m int) error {
 	}
 	var handlerTasks = make(chan Task)
 	var doneCh = make(chan struct{})
-
 	var errCount int64
 	var wg sync.WaitGroup
 
 	wg.Add(n)
 	for i := 0; i < n; i++ {
 		go func() {
-
-			fmt.Println("run gourutin")
 			defer wg.Done()
 
 			for {
@@ -49,7 +46,6 @@ func Run(tasks []Task, n, m int) error {
 	}
 
 	for _, task := range tasks {
-		fmt.Println("run loop tasks")
 		if atomic.LoadInt64(&errCount) >= int64(m) {
 			close(doneCh)
 			return ErrErrorsLimitExceeded
