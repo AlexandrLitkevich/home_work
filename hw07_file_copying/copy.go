@@ -13,12 +13,19 @@ var (
 )
 
 //TODO Чтение из файла Done
-//---TODO обработать EOF
-//---TODO USE io.pipe
+//---TODO обработать EOF Done
+//---TODO USE io.pipe maybe
 //TODO Запись в файл Done
 //TODO Установка offset
 //TODO Установка limit
 //TODO Написание тестов
+
+// Tests
+// TODO Копирование всего файла
+
+//----CASES
+// 1)Read all file and copy all file Done
+//2) Use offset for read and copy file
 
 func Copy(fromPath, toPath string, offset, limit int64) error {
 	file, err := os.Open(fromPath)
@@ -27,23 +34,47 @@ func Copy(fromPath, toPath string, offset, limit int64) error {
 	}
 	defer file.Close()
 
-	buf := make([]byte, 1000)
-
-	r, err := io.ReadFull(file, buf)
+	fileInfo, err := os.Stat(fromPath)
 	if err != nil {
 		return err
 	}
-	fmt.Println("this result ReadFull", r)
+	fmt.Println("fileInfo", fileInfo.Size())
 
-	fileCopy, err := os.Create("test.txt")
+	if offset >= fileInfo.Size() {
+		return errors.New("invalid offset")
+	}
+
+	fileCopy, err := os.Create(toPath)
 	if err != nil {
 		return err
 	}
 
 	defer fileCopy.Close()
 
-	re, err := fileCopy.Write(buf)
+	if limit == 0 {
+		_, err := io.Copy(fileCopy, file)
+		if err != nil {
+			return err
+		}
+		return nil
+	}
 
-	fmt.Println("this result Write", re)
+	result := make([]byte, limit)
+
+	_, err = file.Seek(offset, io.SeekStart)
+	if err != nil {
+		return err
+	}
+
+	_, err = file.Read(result)
+	if err != nil {
+		return err
+	}
+
+	_, err = fileCopy.Write(result)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
