@@ -2,7 +2,7 @@ package main
 
 import (
 	"errors"
-	"fmt"
+	"github.com/cheggaaa/pb/v3"
 	"io"
 	"os"
 )
@@ -12,25 +12,10 @@ var (
 	ErrOffsetExceedsFileSize = errors.New("offset exceeds file size")
 )
 
-//TODO Чтение из файла Done
-//---TODO обработать EOF Done
-//---TODO USE io.pipe maybe
-//TODO Запись в файл Done
-//TODO Установка offset
-//TODO Установка limit
-//TODO Написание тестов
-
-// Tests
-// TODO Копирование всего файла
-
-//----CASES
-// 1)Read all file and copy all file Done
-//2) Use offset for read and copy file
-
 func Copy(fromPath, toPath string, offset, limit int64) error {
 	file, err := os.Open(fromPath)
 	if err != nil {
-		return err
+		return ErrUnsupportedFile
 	}
 	defer file.Close()
 
@@ -38,10 +23,9 @@ func Copy(fromPath, toPath string, offset, limit int64) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println("fileInfo", fileInfo.Size())
 
 	if offset >= fileInfo.Size() {
-		return errors.New("invalid offset")
+		return ErrOffsetExceedsFileSize
 	}
 
 	fileCopy, err := os.Create(toPath)
@@ -50,9 +34,11 @@ func Copy(fromPath, toPath string, offset, limit int64) error {
 	}
 
 	defer fileCopy.Close()
+	bar := pb.Full.Start64(limit)
+	barReader := bar.NewProxyReader(file)
 
 	if limit == 0 {
-		_, err := io.Copy(fileCopy, file)
+		_, err := io.Copy(fileCopy, barReader)
 		if err != nil {
 			return err
 		}
@@ -66,15 +52,16 @@ func Copy(fromPath, toPath string, offset, limit int64) error {
 		return err
 	}
 
-	_, err = file.Read(result)
+	n, err := barReader.Read(result)
 	if err != nil {
 		return err
 	}
 
-	_, err = fileCopy.Write(result)
+	_, err = fileCopy.Write(result[:n])
 	if err != nil {
 		return err
 	}
+	bar.Finish()
 
 	return nil
 }
