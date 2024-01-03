@@ -1,4 +1,4 @@
-module github.com/AlexandrLitkevich/hw07_file_copying
+module github.com/AlexandrLitkevich/home_work/hw07_file_copying
 
 go 1.19
 
