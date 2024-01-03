@@ -33,6 +33,10 @@ func TestCopy(t *testing.T) {
 		err := Copy("./unsupfile.txt", "tmp/invalid.txt", 30, 0)
 		require.Error(t, err, ErrUnsupportedFile)
 	})
+	t.Run("Empty file", func(t *testing.T) {
+		err := Copy("./testdata/empty.txt", "tmp/invalid.txt", 30, 0)
+		require.Error(t, err, ErrUnsupportedFile)
+	})
 	t.Run("out offset=0 limit=10", func(t *testing.T) {
 		err := Copy(parentFile, "tmp/test1.txt", 0, 10)
 		require.NoError(t, err)
