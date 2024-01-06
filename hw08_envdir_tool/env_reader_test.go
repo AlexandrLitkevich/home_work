@@ -1,7 +1,23 @@
 package main
 
-import "testing"
+import (
+	"github.com/stretchr/testify/require"
+	"testing"
+)
 
 func TestReadDir(t *testing.T) {
-	// Place your code here
+	t.Run("read dir", func(t *testing.T) {
+
+		envs, err := ReadDir("./testdata/env/")
+		require.NoError(t, err)
+		t.Log(envs)
+		require.False(t, envs["BAR"].NeedRemove)
+		require.False(t, envs["HELLO"].NeedRemove)
+		require.False(t, envs["FOO"].NeedRemove)
+
+		require.True(t, envs["EMPTY"].NeedRemove)
+		require.True(t, envs["UNSET"].NeedRemove)
+
+	})
+
 }
