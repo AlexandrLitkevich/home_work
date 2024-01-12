@@ -43,11 +43,6 @@ func TestValidate(t *testing.T) {
 		in          interface{}
 		expectedErr error
 	}{
-		//{
-		//	name:        "not interface",
-		//	in:          "string",
-		//	expectedErr: nil,
-		//},
 		{
 			name:        "struct App",
 			in:          App{Version: "33"},
@@ -60,10 +55,32 @@ func TestValidate(t *testing.T) {
 			tt := tt
 			t.Parallel()
 
-			// Place your code here.
 			_ = tt
 			err := Validate(tt.in)
 			require.NoError(t, err)
+		})
+	}
+}
+
+func TestValidateError(t *testing.T) {
+	tests := []struct {
+		in          interface{}
+		expectedErr error
+	}{
+		{
+			in:          "string",
+			expectedErr: NotStruct,
+		},
+	}
+
+	for i, tt := range tests {
+		t.Run(fmt.Sprintf("case %d", i), func(t *testing.T) {
+			tt := tt
+			t.Parallel()
+
+			_ = tt
+			err := Validate(tt.in)
+			require.Error(t, err)
 		})
 	}
 }
