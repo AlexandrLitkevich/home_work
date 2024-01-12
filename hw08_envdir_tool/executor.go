@@ -11,13 +11,17 @@ func RunCmd(cmd []string, env Environment) (returnCode int) {
 	if len(cmd) < 1 {
 		return -1
 	}
+
+	//nolint
 	cmds := exec.Command(cmd[0], cmd[1:]...)
 	envs := changeEnv(env)
+
 	cmds.Env = append(os.Environ(), envs...)
 
 	cmds.Stdin = os.Stdin
 	cmds.Stdout = os.Stdout
 	cmds.Stderr = os.Stderr
+
 	if err := cmds.Run(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -26,7 +30,7 @@ func RunCmd(cmd []string, env Environment) (returnCode int) {
 }
 
 func changeEnv(envs Environment) []string {
-	env := []string{}
+	var env []string
 	for k, v := range envs {
 		if _, ok := os.LookupEnv(k); ok {
 			os.Unsetenv(k)
