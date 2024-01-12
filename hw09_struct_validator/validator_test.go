@@ -3,6 +3,7 @@ package hw09structvalidator
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/stretchr/testify/require"
 	"testing"
 )
 
@@ -38,14 +39,20 @@ type (
 
 func TestValidate(t *testing.T) {
 	tests := []struct {
+		name        string
 		in          interface{}
 		expectedErr error
 	}{
+		//{
+		//	name:        "not interface",
+		//	in:          "string",
+		//	expectedErr: nil,
+		//},
 		{
-			// Place your code here.
+			name:        "struct App",
+			in:          App{Version: "33"},
+			expectedErr: nil,
 		},
-		// ...
-		// Place your code here.
 	}
 
 	for i, tt := range tests {
@@ -55,6 +62,8 @@ func TestValidate(t *testing.T) {
 
 			// Place your code here.
 			_ = tt
+			err := Validate(tt.in)
+			require.NoError(t, err)
 		})
 	}
 }
