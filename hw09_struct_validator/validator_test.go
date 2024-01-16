@@ -22,7 +22,8 @@ type (
 	}
 
 	App struct {
-		Version string `validate:"len:5"`
+		Version  string `validate:"len:5"`
+		Location string `validate:"len:5|in:msk,smr,spb"`
 	}
 
 	Token struct {
@@ -45,7 +46,7 @@ func TestValidate(t *testing.T) {
 	}{
 		{
 			name:        "struct App",
-			in:          App{Version: "33"},
+			in:          App{Version: "33", Location: "smr"},
 			expectedErr: nil,
 		},
 	}

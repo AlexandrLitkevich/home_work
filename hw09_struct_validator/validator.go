@@ -1,9 +1,9 @@
 package hw09structvalidator
 
 import (
-	"errors"
 	"fmt"
 	"reflect"
+	"strings"
 )
 
 type ValidationError struct {
@@ -14,46 +14,55 @@ type ValidationError struct {
 type ValidationErrors []ValidationError
 
 func (v ValidationErrors) Error() string {
-	panic("implement me")
+	errBuffer := strings.Builder{}
+	errBuffer.WriteString("Invalid fields: ")
 
+	for _, err := range v {
+		errBuffer.WriteString(fmt.Sprintf("%s: %s \n", err.Field, err.Err))
+	}
+	return errBuffer.String()
 }
 
-/*
-STEP_BY_STEP
-*
-	* type assertion к структуре
- 	* прочитать с помощью reflect структуру
-	* получаем поле читаем struct tag
-	* получаем  filed value
-	* провалидировать string and int
-*/
-
-const (
-	len    = "len:"
-	regexp = "regexp:"
-)
-
-var (
-	NotStruct = errors.New("the data does not belong to the struct type ")
-)
-
 func Validate(v interface{}) error {
+	vType := reflect.TypeOf(v)
 
-	vValue := reflect.TypeOf(v)
-	if vValue.Kind() != reflect.Struct {
+	if vType.Kind() != reflect.Struct {
 		return NotStruct
 	}
 
-	//var errors []
-	for i := 0; i < vValue.NumField(); i++ {
-		field := vValue.Field(i)
-		tag, ok := field.Tag.Lookup("validate")
+	itemsStructValue := reflect.ValueOf(v)
+	validateErrors := ValidationErrors{}
+
+	for i := 0; i < itemsStructValue.NumField(); i++ {
+		itemStructField := vType.Field(i)
+
+		tag, ok := itemStructField.Tag.Lookup(validateTag)
 		if !ok {
 			continue
 		}
 
-		fmt.Println("this value tag validate", tag)
+		field := FieldData{
+			value: itemsStructValue.Field(i),
+			info:  itemStructField,
+			tag:   tag,
+		}
 
+		switch itemStructField.Type.Kind() {
+		case reflect.String:
+			err := ValidateString(field, &validateErrors)
+			if err != nil {
+				return err
+			}
+		case reflect.Int:
+			validateInt(field)
+		default:
+			return nil
+		}
 	}
+
+	if len(validateErrors) > 0 {
+		return validateErrors
+	}
+
 	return nil
 }
