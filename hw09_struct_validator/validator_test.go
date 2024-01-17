@@ -22,8 +22,9 @@ type (
 	}
 
 	App struct {
-		Version  string `validate:"len:5"`
-		Location string `validate:"len:5|in:msk,smr,spb"`
+		Version        string `validate:"len:5"`
+		RegisterNumber string `validate:"regexp:\\d+"`
+		Location       string `validate:"in:msk,smr,spb"`
 	}
 
 	Token struct {
@@ -36,6 +37,9 @@ type (
 		Code int    `validate:"in:200,404,500"`
 		Body string `json:"omitempty"`
 	}
+	InvalidRuleValidate struct {
+		Name string `validate:"len:one"`
+	}
 )
 
 func TestValidate(t *testing.T) {
@@ -45,8 +49,12 @@ func TestValidate(t *testing.T) {
 		expectedErr error
 	}{
 		{
-			name:        "struct App",
-			in:          App{Version: "33", Location: "smr"},
+			name: "struct App",
+			in: App{
+				Version:        "ver12",
+				RegisterNumber: "221100",
+				Location:       "smr",
+			},
 			expectedErr: nil,
 		},
 	}
@@ -65,12 +73,52 @@ func TestValidate(t *testing.T) {
 
 func TestValidateError(t *testing.T) {
 	tests := []struct {
+		name        string
 		in          interface{}
 		expectedErr error
 	}{
 		{
-			in:          "string",
-			expectedErr: NotStruct,
+			name: "struct App InvalidLen",
+			in: App{
+				Version:        "ver",
+				RegisterNumber: "221100",
+				Location:       "smr",
+			},
+			expectedErr: ValidationErrors{
+				ValidationError{
+					Field: "Version",
+					Err:   InvalidLength,
+				},
+			},
+		},
+		{
+			name: "struct App InvalidLen|InvalidRegexp|InvalidValue",
+			in: App{
+				Version:        "ver",
+				RegisterNumber: "notNumber",
+				Location:       "smr1",
+			},
+			expectedErr: ValidationErrors{
+				ValidationError{
+					Field: "Version",
+					Err:   InvalidLength,
+				},
+				ValidationError{
+					Field: "RegisterNumber",
+					Err:   InvalidRegexp,
+				},
+				ValidationError{
+					Field: "Location",
+					Err:   InvalidValue,
+				},
+			},
+		},
+		{
+			name: "Invalid rule validate",
+			in: InvalidRuleValidate{
+				Name: "petr",
+			},
+			expectedErr: InvalidRule,
 		},
 	}
 
@@ -82,6 +130,10 @@ func TestValidateError(t *testing.T) {
 			_ = tt
 			err := Validate(tt.in)
 			require.Error(t, err)
+			t.Log("this err", err)
+
+			require.Equal(t, tt.expectedErr, err)
+
 		})
 	}
 }
