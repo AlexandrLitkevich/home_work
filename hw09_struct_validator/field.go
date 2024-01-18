@@ -12,9 +12,15 @@ const (
 )
 
 type FieldData struct {
-	value reflect.Value
-	info  reflect.StructField
-	tag   string
+	Value reflect.Value
+	Tag   string
+	Name  string
+}
+
+type FieldDataSlice struct {
+	Info  reflect.StructField
+	Value reflect.Value
+	Tag   string
 }
 
 type Rules struct {
@@ -22,13 +28,9 @@ type Rules struct {
 	value string
 }
 
-func (f *FieldData) GetName() string {
-	return f.info.Name
-}
-
 func (f *FieldData) GetRules() []Rules {
-	rules := strings.Split(f.tag, separatorOR)
-	var rulesInfo []Rules
+	rules := strings.Split(f.Tag, separatorOR)
+	rulesInfo := make([]Rules, 0, len(rules))
 
 	for _, item := range rules {
 		rule := strings.Split(item, separator)

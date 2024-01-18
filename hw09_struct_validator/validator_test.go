@@ -3,8 +3,9 @@ package hw09structvalidator
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/stretchr/testify/require"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 type UserRole string
@@ -19,6 +20,13 @@ type (
 		Role   UserRole        `validate:"in:admin,stuff"`
 		Phones []string        `validate:"len:11"`
 		meta   json.RawMessage //nolint:unused
+	}
+
+	Num struct {
+		Age  int `validate:"min:10|max:30"`
+		Code int `validate:"in:200,404,500"`
+		One  int `validate:"min:10"`
+		Two  int `validate:"max:30"`
 	}
 
 	App struct {
@@ -37,25 +45,54 @@ type (
 		Code int    `validate:"in:200,404,500"`
 		Body string `json:"omitempty"`
 	}
+
 	InvalidRuleValidate struct {
 		Name string `validate:"len:one"`
+	}
+
+	SliceStruct struct {
+		Name []string `validate:"len:6"`
 	}
 )
 
 func TestValidate(t *testing.T) {
 	tests := []struct {
-		name        string
-		in          interface{}
-		expectedErr error
+		in interface{}
 	}{
 		{
-			name: "struct App",
 			in: App{
 				Version:        "ver12",
 				RegisterNumber: "221100",
 				Location:       "smr",
 			},
-			expectedErr: nil,
+		},
+		{
+			in: Num{
+				Age:  22,
+				Code: 200,
+				One:  15,
+				Two:  20,
+			},
+		},
+		{
+			in: Response{
+				Code: 500,
+			},
+		},
+		{
+			in: SliceStruct{
+				Name: []string{"123456", "123456"},
+			},
+		},
+		{
+			in: User{
+				ID:     "caf6e4cb-5a38-47f8-92d9-7296ce85ae78",
+				Name:   "Alex",
+				Age:    22,
+				Email:  "thismail@mail.com",
+				Role:   "admin",
+				Phones: []string{"12345678999", "12345678999", "12345678999", "12345678999"},
+			},
 		},
 	}
 
@@ -87,12 +124,12 @@ func TestValidateError(t *testing.T) {
 			expectedErr: ValidationErrors{
 				ValidationError{
 					Field: "Version",
-					Err:   InvalidLength,
+					Err:   ErrInvalidLength,
 				},
 			},
 		},
 		{
-			name: "struct App InvalidLen|InvalidRegexp|InvalidValue",
+			name: "struct App InvalidLen|ErrInvalidRegexp|ErrInvalidValue",
 			in: App{
 				Version:        "ver",
 				RegisterNumber: "notNumber",
@@ -101,15 +138,15 @@ func TestValidateError(t *testing.T) {
 			expectedErr: ValidationErrors{
 				ValidationError{
 					Field: "Version",
-					Err:   InvalidLength,
+					Err:   ErrInvalidLength,
 				},
 				ValidationError{
 					Field: "RegisterNumber",
-					Err:   InvalidRegexp,
+					Err:   ErrInvalidRegexp,
 				},
 				ValidationError{
 					Field: "Location",
-					Err:   InvalidValue,
+					Err:   ErrInvalidValue,
 				},
 			},
 		},
@@ -118,7 +155,63 @@ func TestValidateError(t *testing.T) {
 			in: InvalidRuleValidate{
 				Name: "petr",
 			},
-			expectedErr: InvalidRule,
+			expectedErr: ErrInvalidRule,
+		},
+		{
+			name: "struct Age InvalidMax|ErrInvalidValue|InvalidMin",
+			in: Num{
+				Age:  222,
+				Code: 100,
+				One:  2,
+				Two:  20,
+			},
+			expectedErr: ValidationErrors{
+				ValidationError{
+					Field: "Age",
+					Err:   ErrInvalidMaxValue,
+				},
+				ValidationError{
+					Field: "Code",
+					Err:   ErrInvalidValue,
+				},
+				ValidationError{
+					Field: "One",
+					Err:   ErrInvalidMinValue,
+				},
+			},
+		},
+		{
+			name: "User struct ",
+			in: User{
+				ID:     "caf6e4cb-5a38-47f8",
+				Name:   "Alex",
+				Age:    17,
+				Email:  "thisma",
+				Role:   "employee",
+				Phones: []string{"12", "12345678999", "12345678999", "12345678999"},
+			},
+			expectedErr: ValidationErrors{
+				ValidationError{
+					Field: "ID",
+					Err:   ErrInvalidLength,
+				},
+				ValidationError{
+					Field: "Age",
+					Err:   ErrInvalidMinValue,
+				},
+				ValidationError{
+					Field: "Email",
+					Err:   ErrInvalidRegexp,
+				},
+				ValidationError{
+					Field: "Role",
+					Err:   ErrInvalidValue,
+				},
+				ValidationError{
+					Field: "Phones index:0",
+					Err:   ErrInvalidLength,
+				},
+			},
 		},
 	}
 
@@ -130,10 +223,7 @@ func TestValidateError(t *testing.T) {
 			_ = tt
 			err := Validate(tt.in)
 			require.Error(t, err)
-			t.Log("this err", err)
-
 			require.Equal(t, tt.expectedErr, err)
-
 		})
 	}
 }

@@ -6,6 +6,14 @@ import (
 	"strings"
 )
 
+const (
+	rulesLen    = "len"
+	rulesIn     = "in"
+	rulesRegexp = "regexp"
+	rulesMin    = "min"
+	rulesMax    = "max"
+)
+
 type ValidationError struct {
 	Field string
 	Err   error
@@ -27,7 +35,7 @@ func Validate(v interface{}) error {
 	vType := reflect.TypeOf(v)
 
 	if vType.Kind() != reflect.Struct {
-		return NotStruct
+		return ErrNotStruct
 	}
 
 	itemsStructValue := reflect.ValueOf(v)
@@ -41,12 +49,23 @@ func Validate(v interface{}) error {
 			continue
 		}
 
-		field := FieldData{
-			value: itemsStructValue.Field(i),
-			info:  itemStructField,
-			tag:   tag,
+		if itemStructField.Type.Kind() == reflect.Slice {
+			sliceLen := itemsStructValue.Field(i).Len()
+			value := itemsStructValue.Field(i).Slice(0, sliceLen)
+
+			err := validateSlice(FieldDataSlice{Value: value, Tag: tag, Info: itemStructField}, &validateErrors)
+			if err != nil {
+				return err
+			}
+			continue
 		}
 
+		field := FieldData{
+			Tag:   tag,
+			Name:  itemStructField.Name,
+			Value: itemsStructValue.Field(i),
+		}
+		//nolint:exhaustive
 		switch itemStructField.Type.Kind() {
 		case reflect.String:
 			err := ValidateString(field, &validateErrors)
@@ -54,7 +73,10 @@ func Validate(v interface{}) error {
 				return err
 			}
 		case reflect.Int:
-			validateInt(field)
+			err := validateInt(field, &validateErrors)
+			if err != nil {
+				return err
+			}
 		default:
 			return nil
 		}

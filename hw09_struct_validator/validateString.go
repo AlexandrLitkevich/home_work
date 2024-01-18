@@ -5,42 +5,36 @@ import (
 	"strconv"
 )
 
-const (
-	rulesLen    = "len"
-	rulesIn     = "in"
-	rulesRegexp = "regexp"
-)
-
 func ValidateString(field FieldData, validateErrors *ValidationErrors) error {
 	rules := field.GetRules()
-	strFieldValue := field.value.String()
+	value := field.Value.String()
 
 	for _, rule := range rules {
 		if rule.name == rulesLen {
 			valRule, err := strconv.Atoi(rule.value)
 			if err != nil {
-				return InvalidRule
+				return ErrInvalidRule
 			}
-			if len(strFieldValue) != valRule {
-				*validateErrors = append(*validateErrors, ValidationError{Field: field.GetName(), Err: InvalidLength})
+			if len(value) != valRule {
+				*validateErrors = append(*validateErrors, ValidationError{Field: field.Name, Err: ErrInvalidLength})
 			}
 			continue
 		}
 		if rule.name == rulesIn {
-			isMatch, err := regexp.MatchString(strFieldValue, rule.value)
+			isMatch, err := regexp.MatchString(value, rule.value)
 			if err != nil {
 				return err
 			}
 
 			if !isMatch {
-				*validateErrors = append(*validateErrors, ValidationError{Field: field.GetName(), Err: InvalidValue})
+				*validateErrors = append(*validateErrors, ValidationError{Field: field.Name, Err: ErrInvalidValue})
 			}
 		}
 		if rule.name == rulesRegexp {
 			re := regexp.MustCompile(rule.value)
-			result := re.MatchString(strFieldValue)
+			result := re.MatchString(value)
 			if !result {
-				*validateErrors = append(*validateErrors, ValidationError{Field: field.GetName(), Err: InvalidRegexp})
+				*validateErrors = append(*validateErrors, ValidationError{Field: field.Name, Err: ErrInvalidRegexp})
 			}
 		}
 	}
