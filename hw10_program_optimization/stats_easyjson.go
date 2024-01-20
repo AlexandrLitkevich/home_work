@@ -36,19 +36,19 @@ func easyjsonE3ab7953DecodeGithubComAlexandrLitkevichHomeWorkHw10ProgramOptimiza
 			continue
 		}
 		switch key {
-		case "id":
+		case "Id":
 			out.ID = int(in.Int())
-		case "name":
+		case "Name":
 			out.Name = string(in.String())
-		case "username":
+		case "Username":
 			out.Username = string(in.String())
-		case "email":
+		case "Email":
 			out.Email = string(in.String())
-		case "phone":
+		case "Phone":
 			out.Phone = string(in.String())
-		case "password":
+		case "Password":
 			out.Password = string(in.String())
-		case "address":
+		case "Address":
 			out.Address = string(in.String())
 		default:
 			in.SkipRecursive()
@@ -65,37 +65,37 @@ func easyjsonE3ab7953EncodeGithubComAlexandrLitkevichHomeWorkHw10ProgramOptimiza
 	first := true
 	_ = first
 	{
-		const prefix string = ",\"id\":"
+		const prefix string = ",\"Id\":"
 		out.RawString(prefix[1:])
 		out.Int(int(in.ID))
 	}
 	{
-		const prefix string = ",\"name\":"
+		const prefix string = ",\"Name\":"
 		out.RawString(prefix)
 		out.String(string(in.Name))
 	}
 	{
-		const prefix string = ",\"username\":"
+		const prefix string = ",\"Username\":"
 		out.RawString(prefix)
 		out.String(string(in.Username))
 	}
 	{
-		const prefix string = ",\"email\":"
+		const prefix string = ",\"Email\":"
 		out.RawString(prefix)
 		out.String(string(in.Email))
 	}
 	{
-		const prefix string = ",\"phone\":"
+		const prefix string = ",\"Phone\":"
 		out.RawString(prefix)
 		out.String(string(in.Phone))
 	}
 	{
-		const prefix string = ",\"password\":"
+		const prefix string = ",\"Password\":"
 		out.RawString(prefix)
 		out.String(string(in.Password))
 	}
 	{
-		const prefix string = ",\"address\":"
+		const prefix string = ",\"Address\":"
 		out.RawString(prefix)
 		out.String(string(in.Address))
 	}
