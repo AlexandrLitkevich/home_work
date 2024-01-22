@@ -1,0 +1,7 @@
+goos: darwin
+goarch: amd64
+pkg: github.com/AlexandrLitkevich/home_work/hw10_program_optimization
+cpu: Intel(R) Core(TM) i5-8279U CPU @ 2.40GHz
+BenchmarkGetDomainStat-8   	 1298946	       892.8 ns/op	    4154 B/op	       2 allocs/op
+PASS
+ok  	github.com/AlexandrLitkevich/home_work/hw10_program_optimization	4.099s
