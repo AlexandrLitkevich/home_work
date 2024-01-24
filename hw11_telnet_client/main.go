@@ -33,8 +33,6 @@ func main() {
 	}
 	defer l.Close()
 
-	log.Printf("Ready to new connections")
-
 	tClient := NewTelnetClient(addr, defaultTimeoutFlag, os.Stdin, os.Stdout)
 
 	err = tClient.Connect()
