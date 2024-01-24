@@ -5,6 +5,8 @@ import (
 	"log"
 	"net"
 	"os"
+	"os/signal"
+	"syscall"
 	"time"
 )
 
@@ -51,9 +53,14 @@ func main() {
 		res <- tClient.Send()
 	}(res)
 
+	sigint := make(chan os.Signal, 1)
+	signal.Notify(sigint, syscall.SIGINT)
+	defer signal.Stop(sigint)
+
 	select {
+	case <-sigint:
 	case <-res:
-		os.Exit(1)
+		close(sigint)
 	}
 
 }
