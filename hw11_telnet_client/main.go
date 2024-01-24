@@ -39,7 +39,7 @@ func main() {
 
 	err = tClient.Connect()
 	if err != nil {
-		log.Fatalf("Cannot tClient.Connect: %v", err)
+		log.Panicf("Cannot tClient.Connect: %v", err)
 	}
 	defer tClient.Close()
 
@@ -62,5 +62,4 @@ func main() {
 	case <-res:
 		close(sigint)
 	}
-
 }

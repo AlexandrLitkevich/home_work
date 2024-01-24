@@ -56,7 +56,6 @@ func (c *ClientConnection) Send() error {
 
 func (c *ClientConnection) Receive() error {
 	_, err := io.Copy(c.out, c.connection)
-
 	if err != nil {
 		return fmt.Errorf("fail to receive: %w", err)
 	}
