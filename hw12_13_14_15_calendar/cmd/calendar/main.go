@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/AlexandrLitkevich/home_work/hw12_13_14_15_calendar/cmd"
 	"github.com/AlexandrLitkevich/home_work/hw12_13_14_15_calendar/internal/config"
 	"github.com/AlexandrLitkevich/home_work/hw12_13_14_15_calendar/internal/logger"
@@ -17,16 +16,18 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Println("This my cfg", slog.String("This CFG", cfg.Logger.Level))
+	appLogger := logger.New()
 
-	logg := logger.New(cfg.Logger.Level)
+	appLogger.Info("the logger has been successfully configured")
 
-	logg.Warn("this my implemints logg")
+	appLogger.Debug("I'am debug", cfg)
+	appLogger.Warn("I'am debug", cfg)
+
 	//
 	//storage := memorystorage.New()
-	//calendar := app.New(logg, storage)
+	//calendar := app.New(appLogger, storage)
 	//
-	//server := internalhttp.NewServer(logg, calendar)
+	//server := internalhttp.NewServer(appLogger, calendar)
 	//
 	//ctx, cancel := signal.NotifyContext(context.Background(),
 	//	syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)
@@ -39,14 +40,14 @@ func main() {
 	//	defer cancel()
 	//
 	//	if err := server.Stop(ctx); err != nil {
-	//		logg.Error("failed to stop http server: " + err.Error())
+	//		appLogger.Error("failed to stop http server: " + err.Error())
 	//	}
 	//}()
 	//
-	//logg.Info("calendar is running...")
+	//appLogger.Info("calendar is running...")
 	//
 	//if err := server.Start(ctx); err != nil {
-	//	logg.Error("failed to start http server: " + err.Error())
+	//	appLogger.Error("failed to start http server: " + err.Error())
 	//	cancel()
 	//	os.Exit(1) //nolint:gocritic
 	//}

@@ -2,6 +2,7 @@ package logger
 
 import (
 	"github.com/AlexandrLitkevich/home_work/hw12_13_14_15_calendar/internal/logger/handlers/slogpretty"
+	"github.com/spf13/viper"
 	"log/slog"
 	"os"
 )
@@ -16,12 +17,13 @@ const (
 	prod  = "prod"
 )
 
-func New(level string) *Logger {
-	//levelLog := viper.Get("logger.level") //Maybe ???
+func New() *Logger {
+	levelLog := viper.Get("logger.level")
+	slog.Warn("this log level", slog.Any("LOG LEVEL", levelLog))
 
 	var log *slog.Logger
 
-	switch level {
+	switch levelLog {
 	case local:
 		log = setupPrettySlog()
 	case dev:

@@ -1,2 +1,16 @@
 logger:
-  level: "local"  # prod | dev | local
+  level: "local"  # local | dev | prod
+server:
+  port: "localhost"
+  host: "8082"
+  timeout: 4s #время на чтение запроса
+  idle_timeout: 60s #время жизни соендинения(переиспользуем соендинение с одним клиентом)
+storage:
+  login: "admin"
+  password: "admin"
+  host: "localhost"
+  port: "3030"
+  name: "postgres"
+  path: "../../storage/storage.db"
+
+
