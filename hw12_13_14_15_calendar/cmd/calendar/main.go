@@ -10,7 +10,7 @@ import (
 func main() {
 	cmd.Execute()
 
-	cfg, err := config.NewConfig()
+	_, err := config.NewConfig()
 	if err != nil {
 		slog.Error("fail to read config")
 		panic(err)
@@ -19,9 +19,7 @@ func main() {
 	appLogger := logger.New()
 
 	appLogger.Info("the logger has been successfully configured")
-
-	appLogger.Debug("I'am debug", cfg)
-	appLogger.Warn("I'am debug", cfg)
+	//if cfg.Storage.ty
 
 	//
 	//storage := memorystorage.New()

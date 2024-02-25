@@ -6,11 +6,17 @@ server:
   timeout: 4s #время на чтение запроса
   idle_timeout: 60s #время жизни соендинения(переиспользуем соендинение с одним клиентом)
 storage:
-  login: "admin"
-  password: "admin"
-  host: "localhost"
-  port: "3030"
-  name: "postgres"
-  path: "../../storage/storage.db"
+  storageType: "memory" # sql || memory
+  memory:
+    path: "../../storage/storage.go"
+  postgresql:
+    login: "admin"
+    password: "admin"
+    host: "localhost"
+    port: "3030"
+    name: "postgres"
+    path: "../../storage/storage.db"
+
+
 
 

@@ -1,2 +1,2 @@
 run app
-go run . --config=PATH
+'go run . --config=PATH''

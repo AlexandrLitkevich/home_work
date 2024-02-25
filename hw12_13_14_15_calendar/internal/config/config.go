@@ -7,9 +7,11 @@ import (
 )
 
 type Config struct {
-	Logger  LoggerConf
-	Server  ServerConfig
-	Storage StorageConfig
+	Logger        LoggerConf
+	Server        ServerConfig
+	Storage       Storage
+	MemoryStorage MemoryStorage
+	SQLStorage    SQLStorage
 }
 
 type LoggerConf struct {
@@ -23,16 +25,30 @@ type ServerConfig struct {
 	IdleTimeout time.Duration
 }
 
-type StorageConfig struct {
-	path string
+//const (
+//	memory = "memory"
+//	sql    = "sql"
+//)
+
+type Storage struct {
+	storageType string
+}
+
+type MemoryStorage struct {
+	Path string //TODO ???
+}
+
+type SQLStorage struct {
+	login    string
+	password string //TODO how you write???
+	Host     string
+	Port     string
+	Name     string
+	Path     string
 }
 
 func NewConfig() (Config, error) {
 	var cfg Config
-
-	keys := viper.AllKeys()
-
-	fmt.Println("this keys", keys)
 
 	err := viper.Unmarshal(&cfg)
 	if err != nil {
