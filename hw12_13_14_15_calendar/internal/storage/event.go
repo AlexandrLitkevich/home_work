@@ -3,5 +3,6 @@ package storage
 type Event struct {
 	ID    string
 	Title string
-	// TODO
+	Desc  string
+	// TODO  что еще нужно?
 }

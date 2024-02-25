@@ -1,0 +1,22 @@
+logger:
+  level: "local"  # local | dev | prod
+server:
+  port: "localhost"
+  host: "8082"
+  timeout: 4s #время на чтение запроса
+  idle_timeout: 60s #время жизни соендинения(переиспользуем соендинение с одним клиентом)
+storage:
+  storageType: "memory" # sql || memory
+  memory:
+    path: "../../storage/storage.go"
+  postgresql:
+    login: "admin"
+    password: "admin"
+    host: "localhost"
+    port: "3030"
+    database: "postgres"
+#    path: "../../storage/storage.db"
+
+
+
+
