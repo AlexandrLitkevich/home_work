@@ -7,11 +7,10 @@ import (
 )
 
 type Config struct {
-	Logger        LoggerConf
-	Server        ServerConfig
-	Storage       Storage
-	MemoryStorage MemoryStorage
-	SQLStorage    SQLStorage
+	Logger      LoggerConf
+	Server      ServerConfig
+	StorageType string
+	SQLStorage  SQLStorage
 }
 
 type LoggerConf struct {
@@ -25,26 +24,13 @@ type ServerConfig struct {
 	IdleTimeout time.Duration
 }
 
-//const (
-//	memory = "memory"
-//	sql    = "sql"
-//)
-
-type Storage struct {
-	storageType string
-}
-
-type MemoryStorage struct {
-	Path string //TODO ???
-}
-
 type SQLStorage struct {
-	login    string
-	password string //TODO how you write???
+	Login    string
+	Password string
 	Host     string
 	Port     string
-	Name     string
-	Path     string
+	DataBase string
+	//Path     string
 }
 
 func NewConfig() (Config, error) {

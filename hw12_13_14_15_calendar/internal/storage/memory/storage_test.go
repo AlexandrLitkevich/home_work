@@ -7,6 +7,7 @@ import (
 	"testing"
 )
 
+// TODO sync test
 func TestStorageAddEvent(t *testing.T) {
 	store := New()
 
@@ -73,8 +74,8 @@ func TestStorageGetEvent(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, event)
 
-	newEvent, err := store.Get(ctx, event.ID)
+	getEvent, err := store.Get(ctx, event.ID)
 	require.NoError(t, err)
-	require.Equal(t, event, newEvent)
+	require.Equal(t, event, getEvent)
 
 }

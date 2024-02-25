@@ -9,7 +9,6 @@ import (
 )
 
 type Memory struct {
-	// TODO
 	events map[uuid.UUID]storage.Event
 	mu     sync.RWMutex //nolint:unused
 }
@@ -20,9 +19,10 @@ func New() *Memory {
 	}
 }
 
-//TODO use Sync
-
 func (m *Memory) Add(_ context.Context, title string, desc string) (*storage.Event, error) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
 	key, err := uuid.NewUUID()
 	if err != nil {
 		return nil, err
@@ -45,6 +45,9 @@ func (m *Memory) Add(_ context.Context, title string, desc string) (*storage.Eve
 	return &newEvent, nil
 }
 func (m *Memory) Remove(_ context.Context, id string) error {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
 	key := uuid.MustParse(id)
 
 	delete(m.events, key)
@@ -52,6 +55,9 @@ func (m *Memory) Remove(_ context.Context, id string) error {
 	return nil
 }
 func (m *Memory) Edit(_ context.Context, event storage.Event) (*storage.Event, error) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
 	key := uuid.MustParse(event.ID)
 
 	m.events[key] = event
@@ -67,13 +73,15 @@ func (m *Memory) Get(_ context.Context, id string) (*storage.Event, error) {
 	}
 	return &event, nil
 }
-func (m *Memory) List(_ context.Context) []storage.Event {
+func (m *Memory) List(_ context.Context) ([]storage.Event, error) {
 	response := make([]storage.Event, 0, len(m.events))
 
 	for _, event := range m.events {
 		response = append(response, event)
 	}
+	return response, nil
+}
 
-	return response
-
+func (m *Memory) Close() error {
+	return nil
 }

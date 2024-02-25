@@ -14,8 +14,8 @@ storage:
     password: "admin"
     host: "localhost"
     port: "3030"
-    name: "postgres"
-    path: "../../storage/storage.db"
+    database: "postgres"
+#    path: "../../storage/storage.db"
 
 
 
