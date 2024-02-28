@@ -18,7 +18,7 @@ const (
 )
 
 func New() *Logger {
-	levelLog := viper.Get("logger.level")
+	levelLog := viper.Get("logger")
 	slog.Warn("this log level", slog.Any("LOG LEVEL", levelLog))
 
 	var log *slog.Logger

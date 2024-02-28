@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"github.com/AlexandrLitkevich/home_work/hw12_13_14_15_calendar/cmd"
 	"github.com/AlexandrLitkevich/home_work/hw12_13_14_15_calendar/internal/app"
 	"github.com/AlexandrLitkevich/home_work/hw12_13_14_15_calendar/internal/config"
@@ -9,6 +10,10 @@ import (
 	memorystorage "github.com/AlexandrLitkevich/home_work/hw12_13_14_15_calendar/internal/storage/memory"
 	sqlstorage "github.com/AlexandrLitkevich/home_work/hw12_13_14_15_calendar/internal/storage/sql"
 	"log/slog"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 )
 
 func main() {
@@ -33,27 +38,27 @@ func main() {
 	calendar := app.New(appLogger, storage)
 
 	server := internalhttp.NewServer(appLogger, calendar)
-	//
-	//ctx, cancel := signal.NotifyContext(context.Background(),
-	//	syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)
-	//defer cancel()
-	//
-	//go func() {
-	//	<-ctx.Done()
-	//
-	//	ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
-	//	defer cancel()
-	//
-	//	if err := server.Stop(ctx); err != nil {
-	//		appLogger.Error("failed to stop http server: " + err.Error())
-	//	}
-	//}()
-	//
-	//appLogger.Info("calendar is running...")
-	//
-	//if err := server.Start(ctx); err != nil {
-	//	appLogger.Error("failed to start http server: " + err.Error())
-	//	cancel()
-	//	os.Exit(1) //nolint:gocritic
-	//}
+
+	ctx, cancel := signal.NotifyContext(context.Background(),
+		syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)
+	defer cancel()
+
+	go func() {
+		<-ctx.Done()
+
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
+		defer cancel()
+
+		if err := server.Stop(ctx); err != nil {
+			appLogger.Error("failed to stop http server: " + err.Error())
+		}
+	}()
+
+	appLogger.Info("calendar is running...")
+
+	if err := server.Start(ctx); err != nil {
+		appLogger.Error("failed to start http server: " + err.Error())
+		cancel()
+		os.Exit(1) //nolint:gocritic
+	}
 }
