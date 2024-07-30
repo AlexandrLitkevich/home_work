@@ -17,7 +17,8 @@ type Storage interface {
 	Edit(ctx context.Context, event storage.Event) (*storage.Event, error)
 	Get(ctx context.Context, id string) (*storage.Event, error)
 	List(ctx context.Context) ([]storage.Event, error)
-	Close() error
+	Close(ctx context.Context) error
+	Ping(ctx context.Context) error
 }
 
 func New(logger Logger, storage Storage) *App {

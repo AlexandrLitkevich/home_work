@@ -82,6 +82,12 @@ func (m *Memory) List(_ context.Context) ([]storage.Event, error) {
 	return response, nil
 }
 
-func (m *Memory) Close() error {
+// Close TODO Нужно как то их подчистить
+func (m *Memory) Close(_ context.Context) error {
+	return nil
+}
+
+// Ping TODO Нужно как то их подчистить
+func (m *Memory) Ping(_ context.Context) error {
 	return nil
 }

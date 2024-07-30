@@ -1,9 +1,0 @@
--- CREATE TABLE events (
---     id UUID PRIMARY KEY DEFAULT,
---     title text,
---     description text,
---     start_at TIMESTAMP,
---     end_at TIMESTAMP,
---     user_id INT,
---     remind_for TIMESTAMP
--- );

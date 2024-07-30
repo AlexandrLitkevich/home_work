@@ -9,6 +9,7 @@ import (
 	internalhttp "github.com/AlexandrLitkevich/home_work/hw12_13_14_15_calendar/internal/server/http"
 	memorystorage "github.com/AlexandrLitkevich/home_work/hw12_13_14_15_calendar/internal/storage/memory"
 	sqlstorage "github.com/AlexandrLitkevich/home_work/hw12_13_14_15_calendar/internal/storage/sql"
+	"github.com/jackc/pgx/v5"
 	"log/slog"
 	"os"
 	"os/signal"
@@ -22,16 +23,43 @@ func main() {
 	cfg, err := config.NewConfig()
 	if err != nil {
 		slog.Error("fail to read config")
-		panic(err)
+		os.Exit(1)
 	}
+
+	ctx := context.Background()
 
 	appLogger := logger.New()
 	var storage app.Storage
-	appLogger.Info("the logger has been successfully configured")
-	if cfg.StorageType == "memory" {
+	appLogger.Info("the logger has been successfully configured", cfg)
+	if cfg.Storage.StorageType == "memory" {
 		storage = memorystorage.New()
-	} else if cfg.StorageType == "sql" {
-		storage = sqlstorage.New(appLogger, cfg)
+	} else if cfg.Storage.StorageType == "sql" {
+		appLogger.Info("connection to database....")
+		appLogger.Info("cfg.Storage.Postrges.Url", cfg.Storage.Postgres.Url)
+
+		conn, err := pgx.Connect(ctx, cfg.Storage.Postgres.Url)
+		if err != nil {
+			slog.Error("fail to connection postgres")
+		}
+
+		appLogger.Info("connection to database success")
+
+		storage = sqlstorage.New(appLogger, cfg, conn)
+		defer storage.Close(ctx)
+
+		err = storage.Ping(ctx)
+		if err != nil {
+			appLogger.Error("failed connection database", err)
+		}
+
+		//var greeting string
+		//err = conn.QueryRow(context.Background(), "select 'Hello, world!'").Scan(&greeting)
+		//if err != nil {
+		//	fmt.Fprintf(os.Stderr, "QueryRow failed: %v\n", err)
+		//	os.Exit(1)
+		//}
+		//appLogger.Warn("this test greeting", greeting)
+		//slog.Warn("this test greeting", "GRETING", greeting)
 	}
 
 	appLogger.Info("create database")
