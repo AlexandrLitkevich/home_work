@@ -10,7 +10,7 @@ storage:
   memory:
     path: "../../storage/storage.go"
   postgres:
-    url: "postgres://postgres:otushomework@localhost:5432/postgres"
+    url: "postgres://alex:alex@localhost:5432/postgres"
 
 
 

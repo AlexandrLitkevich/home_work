@@ -2,6 +2,12 @@ package main
 
 import (
 	"context"
+	"log/slog"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
+
 	"github.com/AlexandrLitkevich/home_work/hw12_13_14_15_calendar/cmd"
 	"github.com/AlexandrLitkevich/home_work/hw12_13_14_15_calendar/internal/app"
 	"github.com/AlexandrLitkevich/home_work/hw12_13_14_15_calendar/internal/config"
@@ -10,11 +16,6 @@ import (
 	memorystorage "github.com/AlexandrLitkevich/home_work/hw12_13_14_15_calendar/internal/storage/memory"
 	sqlstorage "github.com/AlexandrLitkevich/home_work/hw12_13_14_15_calendar/internal/storage/sql"
 	"github.com/jackc/pgx/v5"
-	"log/slog"
-	"os"
-	"os/signal"
-	"syscall"
-	"time"
 )
 
 func main() {
@@ -30,26 +31,31 @@ func main() {
 
 	appLogger := logger.New()
 	var storage app.Storage
-	appLogger.Info("the logger has been successfully configured", cfg)
+	appLogger.Info("the logger has been successfully configured", "config", cfg)
 	if cfg.Storage.StorageType == "memory" {
 		storage = memorystorage.New()
 	} else if cfg.Storage.StorageType == "sql" {
 		appLogger.Info("connection to database....")
-		appLogger.Info("cfg.Storage.Postrges.Url", cfg.Storage.Postgres.Url)
+		appLogger.Info("cfg.Storage.Postrges.Url", "url", cfg.Storage.Postgres.Url)
 
-		conn, err := pgx.Connect(ctx, cfg.Storage.Postgres.Url)
+		conn, err := pgx.Connect(ctx, cfg.Storage.Postgres.Url) // TODO check url
 		if err != nil {
 			slog.Error("fail to connection postgres")
 		}
 
 		appLogger.Info("connection to database success")
 
+		// err = conn.Ping(ctx)
+		// if err != nil {
+		// 	appLogger.Error("failed connection database", "error", err)
+		// }
+
 		storage = sqlstorage.New(appLogger, cfg, conn)
 		defer storage.Close(ctx)
 
 		err = storage.Ping(ctx)
 		if err != nil {
-			appLogger.Error("failed connection database", err)
+			appLogger.Error("failed connection database", "error", err)
 		}
 
 		//var greeting string
