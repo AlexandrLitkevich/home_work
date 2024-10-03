@@ -58,6 +58,11 @@ func main() {
 			appLogger.Error("failed connection database", "error", err)
 		}
 
+		// TODO Run migrarion
+		// if err:= goose.RunContext(ctx, "up", conn, "./migrations"); err != nil { // TODO check url
+		// 	appLogger.Error("failed connection database", "error", err)
+		// }
+
 		//var greeting string
 		//err = conn.QueryRow(context.Background(), "select 'Hello, world!'").Scan(&greeting)
 		//if err != nil {

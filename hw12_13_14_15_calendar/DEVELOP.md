@@ -10,3 +10,11 @@ docker compose up
 
 ## Run postgress
 -   docker compose up
+
+
+
+
+## migrations
+
+-  `goose -dir ./migrations postgres "user=alex password=alex host=localhost dbname=calendardb sslmode=disable" up`
+-  `goose -dir ./migrations postgres "user=alex password=alex host=localhost dbname=calendardb sslmode=disable" status`
